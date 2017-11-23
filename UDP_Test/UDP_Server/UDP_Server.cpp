@@ -1,4 +1,4 @@
-// UDP_Server.cpp : ¶¨Òå¿ØÖÆÌ¨Ó¦ÓÃ³ÌĞòµÄÈë¿Úµã¡£
+// UDP_Server.cpp : å®šä¹‰æ§åˆ¶å°åº”ç”¨ç¨‹åºçš„å…¥å£ç‚¹ã€‚
 //
 
 #include "stdafx.h"
@@ -10,18 +10,6 @@
 using namespace std;
 #pragma comment(lib,"WS2_32.lib")  
 #define  BUF_SIZE 4096
-
-struct Scan
-{
-	float ranges[720];
-	float angle_min;
-	float angle_max;
-	float range_min;
-	float range_max;
-	float angle_increment;
-
-};
-
 struct Data
 {
 	float x;
@@ -40,14 +28,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	SOCKET  s;
 	int     nRet;
 
-	// ³õÊ¼»¯Ì×½Ó×Ö¶¯Ì¬¿â  
+	// åˆå§‹åŒ–å¥—æ¥å­—åŠ¨æ€åº“  
 	if (WSAStartup(MAKEWORD(2, 2), &wsd) != 0)
 	{
 		printf("WSAStartup failed !/n");
 		return 1;
 	}
 
-	// ´´½¨Ì×½Ó×Ö  
+	// åˆ›å»ºå¥—æ¥å­—  
 	s = socket(AF_INET, SOCK_DGRAM, 0);
 	if (s == INVALID_SOCKET)
 	{
@@ -62,13 +50,13 @@ int _tmain(int argc, _TCHAR* argv[])
 	char        buf[BUF_SIZE];
 	int         len = sizeof(SOCKADDR);
 
-	// ÉèÖÃ·şÎñÆ÷µØÖ·  
+	// è®¾ç½®æœåŠ¡å™¨åœ°å€  
 	ZeroMemory(buf, BUF_SIZE);
 	addrSrv.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
 	addrSrv.sin_family = AF_INET;
 	addrSrv.sin_port = htons(5000);
 
-	// °ó¶¨Ì×½Ó×Ö  
+	// ç»‘å®šå¥—æ¥å­—  
 	nRet = bind(socketSrv, (SOCKADDR*)&addrSrv, sizeof(SOCKADDR));
 	if (SOCKET_ERROR == nRet)
 	{
@@ -77,15 +65,14 @@ int _tmain(int argc, _TCHAR* argv[])
 		WSACleanup();
 		return -1;
 	}
-	//Data data;
-	//data.data[0] = 0;
-	//data.data[1] = 0;
-	Scan data;
+	Data data;
+	data.data[0] = 0;
+	data.data[1] = 0;
 	while (1)
 	{
 		//data.ranges.clear();
 		//data.ranges.resize(720);
-		// ´Ó¿Í»§¶Ë½ÓÊÕÊı¾İ  
+		// ä»å®¢æˆ·ç«¯æ¥æ”¶æ•°æ®  
 		nRet = recvfrom(socketSrv, buf, BUF_SIZE, 0, (SOCKADDR*)&addrClient, &len);
 		if (SOCKET_ERROR == nRet)
 		{
@@ -95,10 +82,10 @@ int _tmain(int argc, _TCHAR* argv[])
 			return -1;
 		}
 		memcpy(&data, buf, sizeof(data) + 1);
-		// ´òÓ¡À´×Ô¿Í»§¶Ë·¢ËÍÀ´µÄÊı¾İ  
+		// æ‰“å°æ¥è‡ªå®¢æˆ·ç«¯å‘é€æ¥çš„æ•°æ®  
 		//printf("Recv From Client:%s", buf);
 		//cout << endl;
-		// Ïò¿Í»§¶Ë·¢ËÍÊı¾İ  
+		// å‘å®¢æˆ·ç«¯å‘é€æ•°æ®  
 		//sendto(socketSrv, "UDP Hello World !", sizeof("UDP Hello World !"), 0, (SOCKADDR*)&addrClient, len);
 		//cout <<"Data 1:"<<data.x<<", Data 2: "<<data.y<< endl;
 		cout << "range:" << data.ranges[720] << endl;
